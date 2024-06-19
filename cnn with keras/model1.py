@@ -1,3 +1,7 @@
+#cnn using keras
+
+
+
 import os
 from keras import layers
 from keras import models
@@ -104,4 +108,4 @@ print(f'Test accuracy: {test_acc}')
 print(f'Test loss: {test_loss}')
 
 # Save the model
-model.save('backExerciseClassifier.h5')
+model.save('backExerciseClassifierNew.h5')
