@@ -8,6 +8,8 @@ from keras import models
 from keras._tf_keras.keras.preprocessing.image import ImageDataGenerator
 # from keras.preprocessing.image import ImageDataGenerator
 import matplotlib.pyplot as plt
+from keras._tf_keras.keras.callbacks import EarlyStopping
+
 
 # Define directories
 base_dir = os.path.join(os.getcwd(), 'back')
@@ -23,6 +25,7 @@ train_datagen = ImageDataGenerator(
     shear_range=0.2,
     zoom_range=0.2,
     horizontal_flip=True,
+    fill_mode='nearest'
 )
 
 test_datagen = ImageDataGenerator(rescale=1.0 / 255)
@@ -53,6 +56,7 @@ model.add(layers.Conv2D(512, (3, 3), activation='relu'))
 model.add(layers.MaxPooling2D((2, 2)))
 model.add(layers.Flatten())
 model.add(layers.Dense(512, activation='relu'))
+model.add(layers.Dropout(0.5))  # Adding dropout layer
 model.add(layers.Dense(4, activation='softmax'))  # Adjust the output layer based on the number of classes
 
 model.summary()
@@ -64,13 +68,18 @@ model.compile(
     metrics=['acc'],
 )
 
+# early stopping callback
+early_stopping = EarlyStopping(monitor='val_loss', patience=5, restore_best_weights=True)
+
 # Train the model
 history = model.fit(
     train_generator,
     steps_per_epoch=30,
-    epochs=10,
+    epochs=11,
     validation_data=validation_generator,
     validation_steps=10,
+    callbacks=[early_stopping]
+
 )
 
 # Plot training and validation accuracy and loss
